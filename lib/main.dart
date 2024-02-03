@@ -15,8 +15,10 @@ class App extends ConsumerWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
+    final setupLocator = ref.watch(setupLocatorProvider);
+
     return MaterialApp.router(
       title: 'Minimal Flutter Template',
       theme: ThemeDefinition.lightTheme,
@@ -24,21 +26,22 @@ class App extends ConsumerWidget {
       routerConfig: router,
       debugShowCheckedModeBanner: false,
       builder: (context, routedChild) {
-        return FutureBuilder(
-          future: di.setupLocator(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return FlutterSmartDialog.init()(
-                  context, ThemedContainer(child: routedChild));
-            } else {
-              return const SplashScreen();
-            }
-          },
+        return setupLocator.when(
+          data: (_) => FlutterSmartDialog.init()(
+            context,
+            ThemedContainer(child: routedChild),
+          ),
+          loading: () => const SplashScreen(),
+          error: (error, stack) => ErrorScreen(error: error),
         );
       },
     );
   }
 }
+
+final setupLocatorProvider = FutureProvider<void>((ref) async {
+  await di.setupLocator();
+});
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -53,6 +56,30 @@ class SplashScreen extends StatelessWidget {
             SvgPicture.asset("assets/logo.svg", width: 120),
             const SizedBox(height: 20),
             const CircularProgressIndicator()
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ErrorScreen extends StatelessWidget {
+  final Object error;
+  const ErrorScreen({required this.error, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset("assets/logo.svg", width: 120),
+            const SizedBox(height: 20),
+            Text(
+              'An error occurred: $error',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
           ],
         ),
       ),
