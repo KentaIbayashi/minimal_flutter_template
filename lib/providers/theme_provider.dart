@@ -2,9 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:minimal_flutter_template/di_container.dart';
 import 'package:minimal_flutter_template/services/storage_service.dart';
 
-class ThemeNotifier extends StateNotifier<bool> {
-  ThemeNotifier() : super(false) {
+class ThemeNotifier extends Notifier<bool> {
+  @override
+  bool build() {
     _loadFromPrefs();
+    return state;
   }
 
   _loadFromPrefs() {
@@ -24,6 +26,5 @@ class ThemeNotifier extends StateNotifier<bool> {
   }
 }
 
-final themeNotifierProvider = StateNotifierProvider<ThemeNotifier, bool>((ref) {
-  return ThemeNotifier();
-});
+final themeNotifierProvider =
+    NotifierProvider<ThemeNotifier, bool>(ThemeNotifier.new);
