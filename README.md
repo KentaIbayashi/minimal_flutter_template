@@ -25,9 +25,3 @@
 - ❌ API通信(dio,モックサーバー)
 - ❌ データモデル作成(freezed)
 
-
-## Thanks
-
-If something is missing or you want to add some feature, feel free to open a ticket or contribute!
-
-[LICENSE: MIT](LICENSE)
