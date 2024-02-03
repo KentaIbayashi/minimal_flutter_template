@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:minimal_flutter_template/providers/theme_provider.dart';
 import 'package:minimal_flutter_template/theme_definition.dart';
 import 'di_container.dart' as di;
@@ -18,31 +19,43 @@ class App extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
       title: 'Minimal Flutter Template',
+      theme: ThemeDefinition.lightTheme,
+      darkTheme: ThemeDefinition.darkTheme,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
       builder: (context, routedChild) {
         return FutureBuilder(
-            future: di.setupLocator(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return FlutterSmartDialog.init()(
-                    context, ThemedContainer(child: routedChild));
-              } else {
-                return Container(
-                  color: Theme.of(context).primaryColor,
-                  child: const Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.ac_unit, size: 200),
-                        CircularProgressIndicator()
-                      ],
-                    ),
-                  ),
-                );
-              }
-            });
+          future: di.setupLocator(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return FlutterSmartDialog.init()(
+                  context, ThemedContainer(child: routedChild));
+            } else {
+              return const SplashScreen();
+            }
+          },
+        );
       },
+    );
+  }
+}
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset("logo.svg", width: 120),
+            const SizedBox(height: 20),
+            const CircularProgressIndicator()
+          ],
+        ),
+      ),
     );
   }
 }
@@ -53,8 +66,6 @@ class ThemedContainer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    //ref.read(themeProvider)
-
     final isDarkMode = ref.watch(themeNotifierProvider);
 
     return Theme(
@@ -62,18 +73,4 @@ class ThemedContainer extends ConsumerWidget {
       child: child ?? Container(),
     );
   }
-}
-
-class AppRoutes {
-  static const RouteDef dashboard = RouteDef('/dashboard', 'Dashboard');
-  static const RouteDef screenOne = RouteDef('/screen_one', 'Screen One');
-  static const RouteDef screenTwo = RouteDef('/screen_two', 'Screen Two');
-  static const RouteDef login = RouteDef('/login', 'Login');
-}
-
-class RouteDef {
-  final String path;
-  final String name;
-
-  const RouteDef(this.path, this.name);
 }

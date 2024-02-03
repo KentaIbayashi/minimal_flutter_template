@@ -1,16 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:minimal_flutter_template/di_container.dart';
-import 'package:minimal_flutter_template/main.dart';
 import 'package:minimal_flutter_template/providers/side_menu_provider.dart';
 import 'package:minimal_flutter_template/providers/theme_provider.dart';
 import 'package:minimal_flutter_template/pages/responsive.dart';
-import 'package:minimal_flutter_template/services/storage_service.dart';
-
-import '../../../../../constants.dart';
+import 'package:minimal_flutter_template/router/route_definition.dart';
 
 class Header extends StatelessWidget {
   const Header({
@@ -19,7 +14,6 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final darkTheme = ref.watch(themeProvider);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -78,13 +72,10 @@ class Header extends StatelessWidget {
                 final darkTheme = ref.watch(themeNotifierProvider);
                 return IconButton(
                   icon: darkTheme
-                      ? Icon(Icons.dark_mode)
-                      : Icon(Icons.light_mode),
+                      ? const Icon(Icons.dark_mode)
+                      : const Icon(Icons.light_mode),
                   tooltip: "モード",
                   onPressed: () {
-                    // ヘルプの処理
-                    // getIt.get<StorageService>().saveIsDarkMode(
-                    //     !ref.read(themeProvider.notifier).state);
                     ref.read(themeNotifierProvider.notifier).toggle();
                   },
                 );
@@ -103,24 +94,34 @@ class Header extends StatelessWidget {
               // アバター
               PopupMenuButton<String>(
                 tooltip: "アカウント",
-                onSelected: (String result) {
-                  // メニュー項目が選択されたときの処理
-                  print(result);
-                },
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                   PopupMenuItem<String>(
                     value: 'Logout',
-                    child: Text('ログアウト'),
+                    child: const Text('ログアウト'),
                     onTap: () {
                       SmartDialog.show(
                         builder: (_) => Container(
                           width: 300,
                           height: 200,
-                          color: Theme.of(context).colorScheme.surface,
+                          decoration: BoxDecoration(
+                            color:
+                                Theme.of(context).colorScheme.tertiaryContainer,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
+                          ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text("ログアウトしますか？"),
+                              Text(
+                                "ログアウトしますか？",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onTertiaryContainer,
+                                ),
+                              ),
+                              const SizedBox(height: 30),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -128,15 +129,53 @@ class Header extends StatelessWidget {
                                     onPressed: () {
                                       SmartDialog.dismiss();
                                     },
-                                    child: const Text("キャンセル"),
+                                    child: Text(
+                                      "キャンセル",
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                    ),
                                   ),
-                                  TextButton(
-                                    onPressed: () {
-                                      GoRouter.of(context)
-                                          .goNamed(AppRoutes.login.name);
-                                      SmartDialog.dismiss();
+                                  const SizedBox(width: 30),
+                                  FilledButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Theme.of(context)
+                                                  .colorScheme
+                                                  .tertiary),
+                                    ),
+                                    onPressed: () async {
+                                      SmartDialog.showLoading(msg: 'ログアウト中');
+                                      // ローディング中に見せるために1秒待つ
+                                      await Future.delayed(
+                                          const Duration(seconds: 1));
+
+                                      await _logout().then((value) {
+                                        context.goNamed(AppRoutes.login.name);
+                                        SmartDialog.dismiss();
+                                        SmartDialog.showNotify(
+                                          msg: 'ログアウトしました',
+                                          notifyType: NotifyType.success,
+                                        );
+                                      }).catchError((onError) {
+                                        SmartDialog.dismiss();
+                                        SmartDialog.showNotify(
+                                          msg: 'ログアウトに失敗しました',
+                                          notifyType: NotifyType.error,
+                                        );
+                                      });
                                     },
-                                    child: const Text("ログアウト"),
+                                    child: Text(
+                                      "ログアウト",
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onTertiary,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -147,149 +186,33 @@ class Header extends StatelessWidget {
                     },
                   ),
                 ],
-                child: const CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      'https://creazilla-store.fra1.digitaloceanspaces.com/icons/3409851/square-animal-outlined-face-8-04-panda-icon-md.png'), // 任意のアバター画像
-                  radius: 16, // アバターのサイズ
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 1,
+                    ),
+                  ),
+                  child: ClipOval(
+                    child: Image.asset("avatar.png"),
+                  ),
                 ),
               )
             ],
           )),
     );
   }
-}
 
-class MyCircleAvatar extends StatelessWidget {
-  const MyCircleAvatar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      tooltip: "アカウント",
-      onSelected: (String result) {
-        // メニュー項目が選択されたときの処理
-        print(result);
-      },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        const PopupMenuItem<String>(
-          value: 'Profile',
-          child: Text('プロフィールを見る'),
-        ),
-        const PopupMenuItem<String>(
-          value: 'Settings',
-          child: Text('設定'),
-        ),
-        PopupMenuItem<String>(
-          value: 'Logout',
-          child: Text('ログアウト'),
-          onTap: () {
-            SmartDialog.show(
-              builder: (context) => Container(
-                width: 300,
-                height: 200,
-                color: Theme.of(context).colorScheme.surface,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("ログアウトしますか？"),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            SmartDialog.dismiss();
-                          },
-                          child: const Text("キャンセル"),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            SmartDialog.dismiss();
-                            context.goNamed(AppRoutes.login.name);
-                          },
-                          child: const Text("ログアウト"),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      ],
-      child: const CircleAvatar(
-        backgroundImage: NetworkImage(
-            'https://creazilla-store.fra1.digitaloceanspaces.com/icons/3409851/square-animal-outlined-face-8-04-panda-icon-md.png'), // 任意のアバター画像
-        radius: 16, // アバターのサイズ
-      ),
-    );
-  }
-}
-
-class ProfileCard extends StatelessWidget {
-  const ProfileCard({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: defaultPadding),
-      padding: const EdgeInsets.symmetric(
-        horizontal: defaultPadding,
-        vertical: defaultPadding / 2,
-      ),
-      decoration: BoxDecoration(
-        color: secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        border: Border.all(color: Colors.white10),
-      ),
-      child: Row(
-        children: [
-          Image.asset(
-            "assets/images/profile_pic.png",
-            height: 38,
-          ),
-          if (!Responsive.isMobile(context))
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-              child: Text("Angelina Jolie"),
-            ),
-          const Icon(Icons.keyboard_arrow_down),
-        ],
-      ),
-    );
-  }
-}
-
-class SearchField extends StatelessWidget {
-  const SearchField({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      decoration: InputDecoration(
-        hintText: "Search",
-        filled: true,
-        border: const OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        suffixIcon: InkWell(
-          onTap: () {},
-          child: Container(
-            padding: const EdgeInsets.all(defaultPadding * 0.75),
-            margin: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-            decoration: const BoxDecoration(
-              color: primaryColor,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-            child: SvgPicture.asset("assets/icons/Search.svg"),
-          ),
-        ),
-      ),
-    );
+  // TODO: ログアウト処理実装
+  Future<bool> _logout() async {
+    /*
+    final response = await getIt.get<ApiClient>().post('/logout', {
+    });
+    return response.statusCode == 200;
+    */
+    return true;
   }
 }

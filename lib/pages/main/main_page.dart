@@ -31,7 +31,7 @@ class MainPage extends ConsumerWidget {
     // メイン画面で必要なデータを取得する
     return Scaffold(
       key: _scaffoldKey,
-      drawer: SideMenu(),
+      drawer: const SideMenu(),
       onDrawerChanged: (isOpened) {
         ref.read(sideMenuProvider.notifier).state = isOpened;
       },
@@ -42,10 +42,10 @@ class MainPage extends ConsumerWidget {
             // We want this side menu only for large screen
             if (Responsive.isDesktop(context))
               ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 220, minWidth: 220),
+                constraints: const BoxConstraints(maxWidth: 220, minWidth: 220),
                 // default flex = 1
                 // and it takes 1/6 part of the screen
-                child: SideMenu(),
+                child: const SideMenu(),
               ),
             Expanded(
               // It takes 5/6 part of the screen
@@ -53,7 +53,7 @@ class MainPage extends ConsumerWidget {
               child: SafeArea(
                   child: Column(
                 children: [
-                  Header(),
+                  const Header(),
                   Expanded(
                     // childWidgetにKeyを設定して、再ビルドの最小化
                     child: KeyedSubtree(

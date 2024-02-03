@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:minimal_flutter_template/main.dart';
 import 'package:minimal_flutter_template/providers/router_provider.dart';
 import 'package:minimal_flutter_template/providers/side_menu_provider.dart';
+import 'package:minimal_flutter_template/router/route_definition.dart';
 
 class SideMenu extends ConsumerWidget {
   const SideMenu({
@@ -11,15 +12,10 @@ class SideMenu extends ConsumerWidget {
   });
 
   String extractPath(String url) {
-    // Split the URL by '/'
     List<String> parts = url.split('/');
-
-    // Check if the URL is exactly the target path or has additional segments
     if (parts.length >= 2) {
-      // The desired part is the second element in the list (after the first '/')
       return '/${parts[1]}';
     } else {
-      // Return the original URL if it doesn't have additional segments
       return url;
     }
   }
@@ -35,10 +31,11 @@ class SideMenu extends ConsumerWidget {
       ),
       child: ListView(
         children: [
-          const DrawerHeader(
-              child: Text(
-                  "Minimal Flutter Template") //Image.asset("assets/images/logo.png"),
-              ),
+          Padding(
+            padding: const EdgeInsets.only(top: 30, bottom: 20),
+            child: SvgPicture.asset("logo.svg", width: 80),
+          ),
+          const Divider(),
           DrawerListTile(
             isActive: currentPath == AppRoutes.dashboard.path,
             title: "ダッシュボード",

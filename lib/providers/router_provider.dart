@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:minimal_flutter_template/logger.dart';
-import 'package:minimal_flutter_template/main.dart';
 import 'package:minimal_flutter_template/pages/dashboard/dashboard_page.dart';
 import 'package:minimal_flutter_template/pages/login/login_page.dart';
 import 'package:minimal_flutter_template/pages/main/main_page.dart';
+import 'package:minimal_flutter_template/router/route_definition.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(

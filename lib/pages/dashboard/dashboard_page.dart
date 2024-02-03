@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:minimal_flutter_template/main.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -10,8 +8,12 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final dataRecord = [
+    (Icons.people, "ユーザー数", 33),
+    (Icons.account_balance, "売上", 1000000),
+    (Icons.comment, "コメント数", 4000),
+    (Icons.star, "評価", 4.5),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,6 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          //padding: const EdgeInsets.symmetric(horizontal: 24.0),
           children: <Widget>[
             Row(
               children: [
@@ -29,49 +30,55 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 80.0),
-            Column(
-              children: <Widget>[
-                //     Image.asset('packages/shrine_images/diamond.png'),
-                const SizedBox(height: 16.0),
-                Text(
-                  'Minimal Flutter Template',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            const SizedBox(height: 80.0),
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 400),
-              child: TextField(
-                controller: _usernameController,
-                decoration: const InputDecoration(
-                    labelText: 'Username', border: OutlineInputBorder()),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 200,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: dataRecord.length, // リストのアイテム数
+                itemBuilder: (context, index) {
+                  // itemBuilderで各アイテムを定義
+                  final record = dataRecord[index];
+                  return Card(
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    child: SizedBox(
+                      height: 200,
+                      width: 300,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(record.$1, // レコードのアイコン
+                                size: 50,
+                                color: Theme.of(context).colorScheme.secondary),
+                            Text(
+                              record.$2, // レコードのテキスト1
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              record.$3.toString(), // レコードのテキスト2
+                              style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSecondaryContainer,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                scrollDirection: Axis.horizontal, // 水平方向にスクロール
               ),
-            ),
-            const SizedBox(height: 12.0),
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 400),
-              child: TextField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                    labelText: 'Password', border: OutlineInputBorder()),
-              ),
-            ),
-            const SizedBox(height: 24.0),
-            OverflowBar(
-              spacing: 8,
-              alignment: MainAxisAlignment.center,
-              children: <Widget>[
-                TextButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            Theme.of(context).primaryColorLight)),
-                    onPressed: () => {
-                          context.goNamed(AppRoutes.dashboard.name),
-                        },
-                    child: Text('ログイン'))
-              ],
             ),
           ],
         ),

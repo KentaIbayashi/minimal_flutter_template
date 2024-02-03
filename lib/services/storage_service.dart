@@ -1,15 +1,14 @@
+import 'package:minimal_flutter_template/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService {
-  // hiveの初期化処理を行う
   late SharedPreferences prefs;
 
   Future<StorageService> init() async {
-    print('Initializing StorageService...');
     prefs = await SharedPreferences.getInstance();
-
-    //await Future.delayed(Duration(seconds: 1));
-    print('StorageService initialized!');
+    logger.d('StorageService initialized');
+    // デモ用にローディングを長く見せるためにわざと遅延させる
+    await Future.delayed(const Duration(seconds: 1));
 
     return this;
   }

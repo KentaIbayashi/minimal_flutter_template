@@ -32,7 +32,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  flutter_native_splash: ^2.0.2
   flutter_riverpod: ^2.4.9
   flutter_smart_dialog: ^4.9.6
   flutter_svg: ^1.0.3
