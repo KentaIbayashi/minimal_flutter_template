@@ -65,10 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: FilledButton(
                     onPressed: () async {
                       SmartDialog.showLoading(msg: 'ログイン中');
-                      // ローディング中に見せるために1秒待つ
-                      await Future.delayed(const Duration(seconds: 1));
-
-                      await _login().then((value) {
+                      _login().then((value) {
                         context.goNamed(AppRoutes.dashboard.name);
                         SmartDialog.dismiss();
                         SmartDialog.showNotify(
@@ -103,6 +100,8 @@ class _LoginPageState extends State<LoginPage> {
     });
     return response.statusCode == 200;
     */
+    // ローディング中に見せるために1秒待つ
+    await Future.delayed(const Duration(seconds: 1));
     return true;
   }
 }

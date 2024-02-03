@@ -72,7 +72,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       child: const Text('404 Page not found'),
     ),
     redirect: (context, state) {
-      logger.d("path:${state.path}");
+      logger.d("path:${state.fullPath}");
       // 未認証の場合は、ログイン画面に遷移させるなどの処理を行う
       //if (!isAuth) {
       // If the user is not authenticated, redirect to the login page

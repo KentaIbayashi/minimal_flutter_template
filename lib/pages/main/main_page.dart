@@ -7,18 +7,15 @@ import 'package:minimal_flutter_template/pages/main/components/side_menu.dart';
 
 class MainPage extends ConsumerWidget {
   final Widget childWidget;
-  final GlobalKey<ScaffoldState> _scaffoldKey; // = GlobalKey<ScaffoldState>();
-  final UniqueKey childWidgetKey = UniqueKey(); // ここにキーを追加
-  MainPage(
+  final GlobalKey<ScaffoldState> _scaffoldKey;
+  const MainPage(
       {required this.childWidget,
       required GlobalKey<ScaffoldState> scaffoldKey,
       super.key})
       : _scaffoldKey = scaffoldKey;
   @override
   Widget build(BuildContext context, ref) {
-    print("rebuild");
     ref.listen<bool>(sideMenuProvider, (previous, next) {
-      print(next);
       if (_scaffoldKey.currentState == null) return;
 
       if (next) {
@@ -55,14 +52,12 @@ class MainPage extends ConsumerWidget {
                 children: [
                   const Header(),
                   Expanded(
-                    // childWidgetにKeyを設定して、再ビルドの最小化
-                    child: KeyedSubtree(
-                      key: childWidgetKey,
+                    child: Container(
                       child: childWidget,
                     ),
                   ),
                 ],
-              )), //DashboardScreen(),
+              )),
             ),
           ],
         ),
