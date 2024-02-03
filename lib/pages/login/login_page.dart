@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  SvgPicture.asset("logo.svg", width: 80),
+                  SvgPicture.asset("assets/logo.svg", width: 80),
                   const SizedBox(height: 12.0),
                   Text(
                     'Minimal Flutter Template',

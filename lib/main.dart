@@ -50,7 +50,7 @@ class SplashScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset("logo.svg", width: 120),
+            SvgPicture.asset("assets/logo.svg", width: 120),
             const SizedBox(height: 20),
             const CircularProgressIndicator()
           ],

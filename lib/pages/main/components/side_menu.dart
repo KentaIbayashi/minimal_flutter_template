@@ -33,7 +33,7 @@ class SideMenu extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 30, bottom: 20),
-            child: SvgPicture.asset("logo.svg", width: 80),
+            child: SvgPicture.asset("assets/logo.svg", width: 80),
           ),
           const Divider(),
           DrawerListTile(

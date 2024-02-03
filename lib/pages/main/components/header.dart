@@ -193,7 +193,7 @@ class Header extends StatelessWidget {
                   ),
                 ),
                 child: ClipOval(
-                  child: Image.asset("avatar.png"),
+                  child: Image.asset("assets/avatar.png"),
                 ),
               ),
             )
