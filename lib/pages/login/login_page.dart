@@ -91,6 +91,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   // TODO: ログイン処理実装
   Future<bool> _login() async {
     /*
